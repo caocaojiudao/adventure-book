@@ -6,9 +6,13 @@ const SALT_FACTOR = 10
 const { categories } = require('../src/Create/constants.js')
 
 mongoose.connect(process.env.MONGOHQ_URL)
+  .catch(err => {
+    console.error('MongoDB connection error:', err)
+    process.exit(1)
+  })
 
 const storySchema = mongoose.Schema({
-    title: { type: String, reqired: true },
+    title: { type: String, required: true },
     published: Boolean,
     author: String,
     description: String,

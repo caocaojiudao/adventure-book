@@ -14,8 +14,8 @@ module.exports = app => {
   app.get('/api/stories/:author', (req, res) => {
     const { author } = req.params
     let query = Story.find({ author })
-    if (author === req.session.username) {
-      query = query.where({ published: true})
+    if (!req.session.user || author !== req.session.user.username) {
+      query = query.where({ published: true })
     }
     query.then(result => {
       res.send({ success: true, stories: result })
@@ -41,10 +41,16 @@ module.exports = app => {
         res.send({ success: false, reason: 'couldnt find story!' })
       } else {
         story.published = published
-        story.save().then(() => {
-          res.send({ success: true })
-        })
+        story.save()
+          .then(() => {
+            res.send({ success: true })
+          })
+          .catch(err => {
+            res.send({ success: false, reason: err })
+          })
       }
+    }).catch(err => {
+      res.send({ success: false, reason: err })
     })
   })
 }

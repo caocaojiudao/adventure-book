@@ -10,10 +10,9 @@ const apiUser = require('./api/user')
 
 const app = new express()
 app.use(express.static('public'))
-app.use(express.static('dist'))
 
 app.use(session({
-  secret: 'blippity-bloppity',
+  secret: process.env.SESSION_SECRET || 'blippity-bloppity',
   resave: false,
   saveUninitialized: true,
 }))
@@ -39,7 +38,9 @@ app.post('/api/story', (req, res) => {
           res.send({ success: false, reason: err })
         })
     }
-  }).catch(e => console.log(e))
+  }).catch(err => {
+    res.send({ success: false, reason: err })
+  })
 })
 
 app.put('/api/story', (req, res) => {

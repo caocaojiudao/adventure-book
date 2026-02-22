@@ -25,9 +25,7 @@ module.exports = app => {
 
   app.post('/api/signup', (req, res) => {
     const { username, password, email } = req.body
-    console.log(req.body)
     User.findOne({ username }).exec().then(result => {
-      console.log(result)
       if(result !== null){
         res.send({ success: false, reason: 'user already exists' })
       } else {
@@ -46,8 +44,9 @@ module.exports = app => {
   })
 
   app.get('/api/logout', (req, res) => {
-    req.session.user = null
-    res.end()
+    req.session.destroy(() => {
+      res.end()
+    })
   })
 
   app.post('/api/auth', (req, res) => {
