@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import parser from 'story-parser'
+import parser from '../parser'
 import styled from 'styled-components'
 import BattleScreen from '../BattleScreen/turnBattle.js'
 import { Weapon, Armor, Item, Recovery, HealthItem, Currency } from './items.jsx'

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import parser from 'story-parser'
+import parser from '../parser'
 import styled from 'styled-components'
 import { Title, Story, Button, InlineHeader, Label } from '../components/index.jsx'
 import { categories } from './constants.js'
