@@ -56,10 +56,10 @@ export default class Session {
     return axios.post('/api/story', { story })
   }
   updateStory(story){
-    return axios.put('api/story', story)
+    return axios.put('/api/story', story)
   }
   fetchStory(id){
-    return axios.get(`api/story/${id}`)
+    return axios.get(`/api/story/${id}`)
   }
   fetchStories(category, value){
     let request

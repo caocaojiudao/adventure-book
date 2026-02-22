@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { Label, Value, Button } from '../components/index.jsx'
 import styled from 'styled-components'
 import Target from './Target.jsx'
-import { challengeStrike, playerStrike } from './combat.js'
+import { challengeStrike as calcChallengeStrike, playerStrike as calcPlayerStrike } from './combat.js'
 
 const rnd = (n) => Math.floor(Math.random() * n)
 
@@ -51,7 +51,7 @@ const Player = ({ player, coolDown, playerStrike }) => (
 const Challenge = ({ challenge, coolDown }) => (
   <BattlePanel>
     <div><Label size="large" >Life: <Value>{Math.floor((challenge.currentHealth/challenge.health)*100)}%</Value></Label></div>
-    <Label>Weapon: <Value>{challenge.weapon}</Value></Label>
+    <Label>Weapon: <Value>{challenge.weapon.name}</Value></Label>
     <div style={{ width: coolDown + '%', height: '5px', backgroundColor: coolDown === 100 ? 'green' : 'yellow' }}/>
   </BattlePanel>
 )
@@ -91,14 +91,21 @@ export default class BattleScreen extends Component {
   }
   playerStrike = () => {
     const { challenge, player } = this.state
-    const hit = playerStrike(player, challenge)
+    const hit = calcPlayerStrike(player, challenge)
+    if (hit.hit) {
+      challenge.currentHealth = Math.max(0, challenge.currentHealth - hit.damage)
+    }
     this.setState({
-      playerCoolDown: 0
+      playerCoolDown: 0,
+      challenge,
     })
   }
   challengeStrike(){
     const { challenge, player } = this.state
-    challengeStrike(player, challenge)
+    const hit = calcChallengeStrike(player, challenge)
+    if (hit.hit) {
+      player.currentHealth = Math.max(0, player.currentHealth - hit.damage)
+    }
   }
   startAnimation = () => {
     this.checkGameConditions()
@@ -121,11 +128,16 @@ export default class BattleScreen extends Component {
         playerCoolDown: playerCoolDown < 100 ? Math.min(100, playerCoolDown + weapon.speed) : playerCoolDown,
         challengeCoolDown: nextChallengeCoolDown
       })
-      requestAnimationFrame(this.startAnimation)
+      this.animationFrame = requestAnimationFrame(this.startAnimation)
     }
   }
   componentDidMount(){
     this.startCountdown()
+  }
+  componentWillUnmount(){
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame)
+    }
   }
   render(){
     const { player, challenge, playerCoolDown, challengeCoolDown, countdown, playerLost } = this.state

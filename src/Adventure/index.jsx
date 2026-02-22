@@ -90,6 +90,7 @@ const rewardComponent = (reward, gameState, key) => {
 class App extends Component {
   constructor({ gameData, session }){
     super()
+    this.gameData = gameData
     const game = parser(gameData.content)
     let section = null;
 
@@ -123,8 +124,9 @@ class App extends Component {
     const pageGoal = game.goals
       .filter(goal => goal.method === 'PAGE')
       .filter(goal => parseInt(goal.condition) === section.id)[0]
+    const { player } = this.state
     if (pageGoal){
-      this.state.player.completedGoals[pageGoal.index] = true;
+      player.completedGoals[pageGoal.index] = true;
     }
     session.gameState.updateSection(selectedOption)
     this.setState({
@@ -132,13 +134,14 @@ class App extends Component {
       textIndex: 0,
       sectionMeta: session.gameState.getMetaForSection(section),
       currentSectionId: selectedOption,
-      selectedOption: null
+      selectedOption: null,
+      player,
     })
   }
   restart = () => {
     const { session } = this.props
     const { game } = this.state
-    session.startStory(game)
+    session.startStory(this.gameData, game)
     const section = game.pages.filter(section => section.id === 0)[0]
 
     this.setState({
@@ -150,7 +153,7 @@ class App extends Component {
     })
   }
   playerWin = () => {
-    const { currentSection, player, game } = this.state
+    const { currentSection, player, game, sectionMeta } = this.state
     const challenge = currentSection.challenges[0]
     const challengeGoal = game.goals
       .filter(goal => goal.method === 'DEFEAT')
@@ -158,7 +161,10 @@ class App extends Component {
     if (challengeGoal) {
       player.completedGoals[challengeGoal.index] = true
     }
-    this.state.sectionMeta.challengePassed = true
+    this.setState({
+      sectionMeta: { ...sectionMeta, challengePassed: true },
+      player,
+    })
     this.props.session.update()
   }
   renderBattle(){
@@ -178,8 +184,9 @@ class App extends Component {
   recoverHealth = () => {
     const { sectionMeta } = this.state
     this.props.session.gameState.recoverHealth()
-    sectionMeta.hasHealthRecovery = false
-
+    this.setState({
+      sectionMeta: { ...sectionMeta, hasHealthRecovery: false }
+    })
   }
   renderRewards(){
     const { sectionMeta, game } = this.state

@@ -60,6 +60,15 @@ export const templates = [
   itemSale,
 ]
 
+export const templateMap = {
+  player,
+  goals,
+  page,
+  item,
+  challenge,
+  rewards: itemSale,
+}
+
 export const prompts = [
   'Put player stats at the beginning of your story',
   'Add goals to help your player track progress',

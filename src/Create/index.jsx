@@ -3,7 +3,7 @@ import parser from 'story-parser'
 import styled from 'styled-components'
 import { Title, Story, Button, InlineHeader, Label } from '../components/index.jsx'
 import { categories } from './constants.js'
-import { templates, prompts } from './templates'
+import { templates, templateMap, prompts } from './templates'
 import validate, { getLastPage} from './validateStory'
 import { Example } from '../Examples/index.jsx'
 
@@ -45,28 +45,28 @@ export default class Create extends Component {
       error: false
     }
   }
-  componentWillMount(){
+  componentDidMount(){
     const { session } = this.props
     session.authenticate()
   }
   addTemplate(type){
     if(!this.state.text){
-      const template = templates[type]
+      const template = templateMap[type]
       return this.setState({
         text: `${this.state.text}${template(0)}`
       })
     } else {
       const story = parser(this.state.text)
       if(story.error){
-        this.setState({ error })
+        this.setState({ error: story.error })
       } else if (!story.pages.length) {
-        const template = templates[type]
+        const template = templateMap[type]
         this.setState({
           text: `${this.state.text}${template(0)}`
         })
       } else {
         const numPages = getLastPage(story)
-        const template = templates[type]
+        const template = templateMap[type]
         this.setState({
           text: `${this.state.text}${template(numPages+1)}`
         })
@@ -77,24 +77,28 @@ export default class Create extends Component {
     const { text, title, category, description } = this.state
     let content = text
     const parserResult = parser(this.state.text)
-    const storyError = parserResult.result && validate(result)
     if (parserResult.error) {
-      this.setState({ error: parserError.error })
-    } else if (!title) {
-      this.setState({ error: 'You are required to provide a title for your adventure.' })
-    } else if (!category) {
-      this.setState({ error: 'You must chose a category for your adventure.'})
+      this.setState({ error: parserResult.error })
     } else {
-    this.props.session.saveStory({ content, title, category, description })
-      .then(response => {
-        const { data } = response
-        if(!data.success){
-          const errorMsg = typeof data.reason === 'string' ? data.reason : data.reason.errors.category.message
-          this.setState({ error: errorMsg })
-        } else {
-          this.props.navigate('profile')
-        }
-      })
+      const storyError = validate(parserResult)
+      if (storyError) {
+        this.setState({ error: storyError })
+      } else if (!title) {
+        this.setState({ error: 'You are required to provide a title for your adventure.' })
+      } else if (!category) {
+        this.setState({ error: 'You must chose a category for your adventure.'})
+      } else {
+        this.props.session.saveStory({ content, title, category, description })
+          .then(response => {
+            const { data } = response
+            if(!data.success){
+              const errorMsg = typeof data.reason === 'string' ? data.reason : data.reason.errors.category.message
+              this.setState({ error: errorMsg })
+            } else {
+              this.props.navigate('profile')
+            }
+          })
+      }
     }
   }
   renderCategories(){

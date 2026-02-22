@@ -13,7 +13,7 @@ export default class AppControl extends Component {
       hash
     }
   }
-  componentWillMount(){
+  componentDidMount(){
     const interval = window.setInterval(() => {
       let hash = window.location.hash.split('#')[1]
       if(hash !== this.state.hash){
