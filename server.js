@@ -4,11 +4,9 @@ const bodyParser = require('body-parser')
 const helmet = require('helmet')
 const compression = require('compression')
 const rateLimit = require('express-rate-limit')
-const MongoStore = require('connect-mongo')
-const {
-  User,
-  Story
-} = require('./models/models')
+const pgSession = require('connect-pg-simple')(session)
+const { Pool } = require('pg')
+const { prisma } = require('./models/models')
 const apiStory = require('./api/story')
 const apiUser = require('./api/user')
 
@@ -33,11 +31,18 @@ const authLimiter = rateLimit({
 app.use('/api/login', authLimiter)
 app.use('/api/signup', authLimiter)
 
+// Persistent session storage backed by Postgres.
+// The session table is created automatically on first run.
+const pgPool = new Pool({ connectionString: process.env.DATABASE_URL })
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'blippity-bloppity',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  store: new pgSession({
+    pool: pgPool,
+    createTableIfMissing: true,
+  }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -56,30 +61,25 @@ app.post('/api/story', (req, res) => {
     return res.status(401).send({ success: false, reason: 'Not authenticated' })
   }
   const story = req.body.story
-  Story.findOne({ title: story.title, author: story.author }).then(result => {
-    if(result !== null){
-      res.send({ success: false, reason: 'A story with this name already exists' })
-    } else {
-      const storyRecord = new Story(story)
-      storyRecord.save()
-        .then(() => {
-          res.send({ success: true })
-        })
-        .catch(err => {
-          res.send({ success: false, reason: err })
-        })
-    }
-  }).catch(err => {
-    res.send({ success: false, reason: err })
-  })
+  prisma.story.findFirst({ where: { title: story.title, author: story.author } })
+    .then(existing => {
+      if (existing) {
+        return res.send({ success: false, reason: 'A story with this name already exists' })
+      }
+      return prisma.story.create({ data: story })
+        .then(() => res.send({ success: true }))
+    })
+    .catch(err => {
+      res.send({ success: false, reason: err.message })
+    })
 })
 
 app.put('/api/story', (req, res) => {
   if (!req.session.user) {
     return res.status(401).send({ success: false, reason: 'Not authenticated' })
   }
-  const { content, title, category, description, _id } = req.body
-  Story.findById(_id)
+  const { content, title, category, description, id } = req.body
+  prisma.story.findUnique({ where: { id: parseInt(id, 10) } })
     .then(story => {
       if (!story) {
         return res.send({ success: false, reason: 'Story not found' })
@@ -87,11 +87,11 @@ app.put('/api/story', (req, res) => {
       if (story.author !== req.session.user.username) {
         return res.status(403).send({ success: false, reason: 'Not authorized' })
       }
-      return Story.findByIdAndUpdate(_id, { content, title, category, description })
+      return prisma.story.update({ where: { id: story.id }, data: { content, title, category, description } })
         .then(() => res.send({ success: true }))
     })
     .catch(err => {
-      res.send({ success: false, reason: err })
+      res.send({ success: false, reason: err.message })
     })
 })
 

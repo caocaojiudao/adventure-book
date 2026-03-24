@@ -27,10 +27,10 @@ export default class Browse extends Component {
   renderStories(){
     const { session } = this.props
     return session.get('stories', []).map((story, i) => {
-      const { author, title, _id } = story
+      const { author, title, id } = story
       return (
         <StoryBox>
-          <a href={`#view/${_id}`} key={`${title}-${i}`}>
+          <a href={`#view/${id}`} key={`${title}-${i}`}>
             <span className="icon">&#9654;</span>
             {` ${title} `}
           </a>

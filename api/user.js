@@ -1,46 +1,50 @@
-const { User } = require('../models/models.js')
+const { prisma, hashPassword, comparePassword } = require('../models/models.js')
 
 module.exports = app => {
 
   app.post('/api/login', (req, res) => {
     const { username, password } = req.body
-
-    User.findOne({ username }).exec().then(user => {
-      const userExists = user !== null
-      const clientUser =  userExists && { username: user.username, id: user._id }
-      if (userExists) {
-        user.comparePassword(password, (err, isMatch) => {
-          if (isMatch) {
-            req.session.user = clientUser
-            res.send({ success: true, userExists, user: clientUser})
-          } else {
-            res.send({ success: false, reason: 'Password incorrect'})
-          }
-        })
-      } else {
-        res.send({ userExists, user: clientUser })
-      }
-    })
+    prisma.user.findUnique({ where: { username } })
+      .then(user => {
+        const userExists = user !== null
+        const clientUser = userExists && { username: user.username, id: user.id }
+        if (userExists) {
+          comparePassword(password, user.password).then(isMatch => {
+            if (isMatch) {
+              req.session.user = clientUser
+              res.send({ success: true, userExists, user: clientUser })
+            } else {
+              res.send({ success: false, reason: 'Password incorrect' })
+            }
+          })
+        } else {
+          res.send({ userExists, user: clientUser })
+        }
+      })
+      .catch(err => {
+        res.send({ success: false, reason: err.message })
+      })
   })
 
   app.post('/api/signup', (req, res) => {
     const { username, password, email } = req.body
-    User.findOne({ username }).exec().then(result => {
-      if(result !== null){
-        res.send({ success: false, reason: 'user already exists' })
-      } else {
-        const user = new User({ username, password, email })
-        user.save()
-          .then(result => {
-            const user = { username: result.username, id: result._id }
-            req.session.user = result
-            res.send({ success: true, user })
-          })
-          .catch(err => {
-            res.send({ success: false, reason: err })
-          })
-      }
-    })
+    prisma.user.findUnique({ where: { username } })
+      .then(existing => {
+        if (existing) {
+          return res.send({ success: false, reason: 'user already exists' })
+        }
+        return hashPassword(password).then(hashed => {
+          return prisma.user.create({ data: { username, email, password: hashed } })
+            .then(result => {
+              const clientUser = { username: result.username, id: result.id }
+              req.session.user = clientUser
+              res.send({ success: true, user: clientUser })
+            })
+        })
+      })
+      .catch(err => {
+        res.send({ success: false, reason: err.message })
+      })
   })
 
   app.get('/api/logout', (req, res) => {
@@ -50,7 +54,7 @@ module.exports = app => {
   })
 
   app.post('/api/auth', (req, res) => {
-    if(req.session.user){
+    if (req.session.user) {
       res.send(req.session.user)
     } else {
       res.send(false)

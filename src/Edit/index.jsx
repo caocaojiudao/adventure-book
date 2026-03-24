@@ -39,13 +39,13 @@ export default class Create extends Component {
     this.props.session.fetchStory(id).then(response => {
       const { data } = response
       if(data.success){
-        const { author, title, category, description, content, _id } = data.story
+        const { author, title, category, description, content, id } = data.story
         this.setState({
           title,
           description,
           category,
           text: content,
-          id: _id,
+          id,
         })
       } else {
         this.setState({ error: data.error })
@@ -75,7 +75,7 @@ export default class Create extends Component {
     } else if (!category) {
       this.setState({ error: 'You must chose a category for your adventure.'})
     } else {
-      this.props.session.updateStory({ content: text, title, category, description, _id: id })
+      this.props.session.updateStory({ content: text, title, category, description, id })
         .then(response => {
           const { data } = response
           if(!data.success){

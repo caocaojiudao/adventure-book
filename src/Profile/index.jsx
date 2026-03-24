@@ -16,7 +16,7 @@ export default class Browse extends Component {
   }
   publish(story, published){
     const { session } = this.props
-    axios.post('/api/story/publish', { id: story._id, published }).then(() => {
+    axios.post('/api/story/publish', { id: story.id, published }).then(() => {
       session.fetchStories('author', session.getUsername())
     })
   }
@@ -33,10 +33,10 @@ export default class Browse extends Component {
         { stories.map((story, i) => {
             return (
               <StoryBox>
-                <a href={`#view/${story._id}`} key={`${story.title}-${i}`}>
+                <a href={`#view/${story.id}`} key={`${story.title}-${i}`}>
                   {story.title || 'error'}
                 </a>
-                <a href={`#edit/${story._id}`}><Button spaceLeft color="blue">EDIT</Button></a>
+                <a href={`#edit/${story.id}`}><Button spaceLeft color="blue">EDIT</Button></a>
                 { !story.published && <Button onClick={() => this.publish(story, true)} spaceLeft color="yellow">PUBLISH</Button> }
                 { story.published && <Button onClick={() => this.publish(story, false)} spaceLeft color="yellow">UN-PUBLISH</Button> }
               </StoryBox>
