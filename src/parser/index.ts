@@ -1,5 +1,3 @@
-export {};
-
 const {
   parseLine,
   TokenType,
@@ -493,4 +491,4 @@ const getKeyValues = (tokens: any[]) => {
   return result
 }
 
-module.exports = parser
+export default parser
