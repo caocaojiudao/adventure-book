@@ -35,10 +35,15 @@ module.exports = app => {
   })
 
   app.post('/api/story/publish/', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send({ success: false, reason: 'Not authenticated' })
+    }
     const { id, published } = req.body
     Story.findById(id).then(story => {
-      if(!story){
+      if (!story) {
         res.send({ success: false, reason: 'couldnt find story!' })
+      } else if (story.author !== req.session.user.username) {
+        res.status(403).send({ success: false, reason: 'Not authorized' })
       } else {
         story.published = published
         story.save()

@@ -1,8 +1,13 @@
 const path = require('path');
-const webpack = require('webpack');
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  devtool: 'eval',
+  mode: isProduction ? 'production' : 'development',
+  // In development, 'eval' gives fast rebuilds.
+  // In production, source maps are omitted entirely so original source is not
+  // shipped to end users.
+  devtool: isProduction ? false : 'eval',
   entry: './src/index.jsx',
   output: {
     path: path.join(__dirname, 'public'),
@@ -30,7 +35,4 @@ module.exports = {
       }
     ]
   },
-  // plugins: [
-  //   new webpack.optimize.UglifyJsPlugin()
-  // ],
 }
