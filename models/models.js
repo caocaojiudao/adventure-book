@@ -5,7 +5,7 @@ const SALT_FACTOR = 10
 
 const { categories } = require('../src/Create/constants.js')
 
-mongoose.connect(process.env.MONGOHQ_URL)
+mongoose.connect(process.env.MONGODB_URI)
   .catch(err => {
     console.error('MongoDB connection error:', err)
     process.exit(1)
