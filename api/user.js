@@ -12,7 +12,10 @@ module.exports = app => {
           comparePassword(password, user.password).then(isMatch => {
             if (isMatch) {
               req.session.user = clientUser
-              res.send({ success: true, userExists, user: clientUser })
+              req.session.save(err => {
+                if (err) return res.send({ success: false, reason: err.message })
+                res.send({ success: true, userExists, user: clientUser })
+              })
             } else {
               res.send({ success: false, reason: 'Password incorrect' })
             }
@@ -38,7 +41,10 @@ module.exports = app => {
             .then(result => {
               const clientUser = { username: result.username, id: result.id }
               req.session.user = clientUser
-              res.send({ success: true, user: clientUser })
+              req.session.save(err => {
+                if (err) return res.send({ success: false, reason: err.message })
+                res.send({ success: true, user: clientUser })
+              })
             })
         })
       })
