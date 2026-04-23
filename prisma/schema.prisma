@@ -27,3 +27,13 @@ model Story {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Session table managed by connect-pg-simple — Prisma must know about it
+// so db push doesn't try to drop it on each deploy.
+model session {
+  sid    String   @id @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], name: "IDX_session_expire")
+}
