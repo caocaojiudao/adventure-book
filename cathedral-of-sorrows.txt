@@ -1,0 +1,125 @@
+PLAYER "Father Mateo"
+HEALTH 26 ATTACK 4 DEFENSE 3
+ITEM "weapon" NAME "holy water" DAMAGE 3 SPEED 5
+ITEM "armor" NAME "worn cassock" DEFENSE 1
+MONEY "silver" 12
+
+GOAL 1 "Find a way into the crypt" ITEM "crypt key"
+GOAL 2 "Break the sanctuary seal" ITEM "sanctuary seal"
+GOAL 3 "Banish the thing at the altar" DEFEAT "archdemon"
+
+PAGE 0
+"Rain lashes the stones of Saint Aurelia Cathedral. You are Father Mateo, sent before dawn to answer the bishop's final letter: evil has rooted itself beneath the altar."
+"The great doors yawn open. Incense and carrion drift out together."
+OPTION 1 "Step into the nave"
+
+PAGE 1
+"The nave is lit by guttering candles and broken stained glass. Pews are overturned as if a congregation fled mid-prayer."
+"Passages lead into side chapels. A sacristy door hangs ajar. A rusted grate marks the stairs to the crypt. Chained doors guard the sanctuary."
+OPTION 2 "Search the Chapel of Mercy"
+OPTION 3 "Enter the Chapel of Relics"
+OPTION 4 "Check the sacristy"
+OPTION 5 "Climb the bell tower stairs"
+OPTION 6 "Descend to the crypt" LOCK "crypt key"
+OPTION 8 "Open the sanctuary doors" LOCK "sanctuary seal"
+
+PAGE 2
+"The Chapel of Mercy is desecrated. A small horned imp dances atop a shattered statue, hissing at your prayers."
+
+CHALLENGE "imp"
+TEXT "The imp darts forward with hooked claws and shrill laughter."
+HEALTH 8 SPEED 4 ATTACK 3 DEFENSE 2
+WEAPON "claws" DAMAGE 2
+
+ITEM "weapon" NAME "blessed candle" DAMAGE 5 SPEED 4
+
+OPTION 1 "Return to the nave"
+OPTION 4 "Go to the sacristy"
+
+PAGE 3
+"In the Chapel of Relics, broken glass litters the floor. A poltergeist lashes through the air, hurling splinters of wood and bone."
+"A ring of heavy keys hangs from a nail beside a prayer alcove."
+
+CHALLENGE "poltergeist"
+TEXT "Shards and reliquary fragments whip toward your face."
+HEALTH 12 SPEED 6 ATTACK 4 DEFENSE 1
+WEAPON "flying shards" DAMAGE 3
+
+ITEM "key" NAME "crypt key" COST "silver" 6
+
+OPTION 1 "Return to the nave"
+
+PAGE 4
+"The sacristy still smells of wax and old paper. Someone set out supplies for one last exorcism."
+"You may purchase prepared relics if you have enough silver."
+
+ITEM "weapon" NAME "silver crucifix" DAMAGE 7 SPEED 3 COST "silver" 10
+
+ITEM "armor" NAME "blessed vestments" DEFENSE 3 COST "silver" 8
+
+ITEM "health" NAME "consecrated host" RECOVERY 8 COST "silver" 5
+
+OPTION 1 "Return to the nave"
+
+PAGE 5
+"Halfway up the bell tower, stone cracks and groans. A gargoyle tears free from the wall and drops in front of you."
+
+CHALLENGE "gargoyle"
+TEXT "The gargoyle slams you with stone fists and jagged wings."
+HEALTH 20 SPEED 2 ATTACK 7 DEFENSE 5
+WEAPON "stone fists" DAMAGE 5
+
+ITEM "key" NAME "sanctuary seal"
+
+ITEM "armor" NAME "martyr shroud" DEFENSE 5
+
+OPTION 1 "Return to the nave"
+
+PAGE 6
+"The crypt grate screams open. Rows of sealed niches line a corridor of damp stone. A possessed acolyte emerges, gripping a ritual knife."
+
+CHALLENGE "possessed acolyte"
+TEXT "The acolyte chants in broken Latin and lunges at your throat."
+HEALTH 16 SPEED 3 ATTACK 5 DEFENSE 3
+WEAPON "ritual knife" DAMAGE 4
+
+ITEM "weapon" NAME "bone of saint thomas" DAMAGE 9 SPEED 2
+
+OPTION 7 "Push deeper into the crypt"
+OPTION 1 "Retreat to the nave"
+
+PAGE 7
+"The lower crypt opens into an ossuary. Bone mosaics form saints whose faces have been carved away."
+"A shadow wraith peels from the wall and stretches a hand through your chest."
+
+CHALLENGE "shadow wraith"
+TEXT "Cold fingers clutch your heart and pull."
+HEALTH 22 SPEED 5 ATTACK 6 DEFENSE 3
+WEAPON "death touch" DAMAGE 5
+
+ITEM "armor" NAME "ossuary plate" DEFENSE 6
+COST "silver" 8
+
+OPTION 6 "Return up the crypt stairs"
+OPTION 8 "Take the hidden passage to sanctuary"
+
+PAGE 8
+"The sanctuary doors groan apart. Black-green fire crawls over the high altar. A giant figure in rotting bishop robes turns toward you."
+"'Little priest,' it whispers, 'this church belongs to me now.'"
+OPTION 9 "Raise your relics and advance"
+
+PAGE 9
+"The cathedral shakes as the archdemon spreads burning wings over the altar."
+"You have come too far to flee. In this place, either your faith breaks, or its kingdom does."
+
+CHALLENGE "archdemon"
+TEXT "Hellfire erupts across the sanctuary floor."
+HEALTH 34 SPEED 4 ATTACK 9 DEFENSE 7
+WEAPON "hellfire" DAMAGE 7
+
+OPTION 10 "Drive the final prayer into its heart"
+
+PAGE 10
+"The fire gutters out. Silence returns to Saint Aurelia. Rain taps softly against clean glass."
+"You kneel before the altar and whisper a prayer of thanks. Dawn finally reaches the nave."
+END

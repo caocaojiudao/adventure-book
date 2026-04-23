@@ -260,7 +260,7 @@ class App extends Component {
     const hasMore = textIndex < text.length - 1
     if (hasMore) {
       return (
-        <div style={{ width: '100%' }}>
+        <div style={{ width: '100%', maxWidth: '500px' }}>
           <StoryText>{ currentText }</StoryText>
           <Continue onClick={() => this.setState({ textIndex: textIndex + 1})}>Continue...</Continue>
         </div>)
@@ -287,10 +287,10 @@ class App extends Component {
         <PlayerInfo>
           { player.health && <Player player={player} gameState={this.props.session.gameState} /> }
           { showItems ? <PlayerItems player={player} gameState={this.props.session.gameState} /> : <noscript /> }
-          {
+          { game.goals.length > 0 && (
             <Panel direction="column">
               <Value>Story Goals</Value>
-              { 
+              {
                 game.goals.map(goal => {
                   const completed = player.completedGoals[goal.index];
                   return (
@@ -302,7 +302,7 @@ class App extends Component {
                 })
               }
             </Panel>
-          }
+          )}
         </PlayerInfo>
       </MainPanels>
     );
