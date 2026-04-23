@@ -27,7 +27,7 @@ class App extends Component {
   render(){
     const { location } = this.props
     const page = location.split('/')[0]
-    const Component = routes[page]
+    const Component = routes[page] || Browse
     const { session, navigate } = this.props
 
     return (

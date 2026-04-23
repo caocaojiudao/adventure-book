@@ -17,22 +17,17 @@ export default class AppControl extends Component {
     const interval = window.setInterval(() => {
       let hash = window.location.hash.split('#')[1]
       if(hash !== this.state.hash){
-        this.setState({
-          hash
-        })
+        this.setState({ hash })
       }
     }, 100)
-    this.setState({
-      interval
+    this.setState({ interval })
+
+    session.onUpdate(() => {
+      this.forceUpdate()
     })
   }
   componentWillUnmount(){
     window.clearInterval(this.state.interval)
-  }
-  componentDidMount(){
-    session.onUpdate(() => {
-      this.forceUpdate()
-    })
   }
   render(){
     const location = this.state.hash

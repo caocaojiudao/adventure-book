@@ -41,9 +41,13 @@ export default class Browse extends Component {
         </div>
         <div className="d-inline-block">
           <Name>{user.username}</Name>
-          <HeaderLink onClick={() => this.handleLogout()}>
-            { user.username ? 'LOG OUT' : 'LOG IN' }
-          </HeaderLink>
+          { user.username
+            ? <HeaderLink onClick={() => this.handleLogout()}>LOG OUT</HeaderLink>
+            : <span>
+                <HeaderLink onClick={() => this.props.navigate('login')}>LOG IN</HeaderLink>
+                <HeaderLink onClick={() => this.props.navigate('login')}>SIGN UP</HeaderLink>
+              </span>
+          }
         </div>
       </div>
     )
