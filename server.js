@@ -12,6 +12,10 @@ const apiUser = require('./api/user')
 
 const app = express()
 
+// Trust the first proxy (Render's load balancer) so Express sees the
+// correct protocol for secure cookie handling
+app.set('trust proxy', 1)
+
 // Security headers — CSP is disabled here because styled-components requires
 // inline styles and the app loads fonts from Google. Configure a proper CSP
 // once a nonce-based approach or a CDN for assets is in place.
