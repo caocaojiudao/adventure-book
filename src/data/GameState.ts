@@ -24,7 +24,10 @@ class GameState {
 
     if (game.player) {
       this.player = deepCopy(game.player)
-      this.player.items = []
+      const startingItems = game.player.items || []
+      this.player.weapons = startingItems.filter((i: any) => i.type === 'weapon')
+      this.player.armor = startingItems.filter((i: any) => i.type === 'armor')
+      this.player.items = startingItems.filter((i: any) => i.type !== 'weapon' && i.type !== 'armor')
       this.player.hiddenItems = []
       this.player.currentHealth = game.player.health
       this.player.currentWeapon = 0
@@ -33,6 +36,8 @@ class GameState {
 
     } else {
       this.player = {
+        weapons: [],
+        armor: [],
         items: [],
         hiddenItems: [],
         currency: []
