@@ -460,9 +460,9 @@ const processPlayer = (parserState: ParserState) => {
         parserState.nextLine()
       } else {
         let keyValues = getKeyValues(tokens)
-        health = keyValues.HEALTH
-        attack = keyValues.ATTACK
-        defense = keyValues.DEFENSE
+        if (keyValues.HEALTH !== undefined) health = keyValues.HEALTH
+        if (keyValues.ATTACK !== undefined) attack = keyValues.ATTACK
+        if (keyValues.DEFENSE !== undefined) defense = keyValues.DEFENSE
         parserState.nextLine()
       }
     }
