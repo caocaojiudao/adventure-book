@@ -29,7 +29,10 @@ class GameState {
       this.player.armor = startingItems.filter((i: any) => i.type === 'armor')
       this.player.items = startingItems.filter((i: any) => i.type !== 'weapon' && i.type !== 'armor')
       this.player.hiddenItems = []
-      this.player.currentHealth = game.player.health
+      this.player.defense = this.player.defense ?? 0
+      this.player.attack = this.player.attack ?? 0
+      this.player.health = this.player.health ?? 0
+      this.player.currentHealth = this.player.health
       this.player.currentWeapon = 0
       this.player.currency = this.player.currency || []
       this.player.completedGoals = {}
